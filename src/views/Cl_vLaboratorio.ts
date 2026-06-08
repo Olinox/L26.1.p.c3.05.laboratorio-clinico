@@ -193,8 +193,12 @@ export class Cl_vLaboratorio {
 
         const textoCodificado = encodeURIComponent(mensaje);
         const urlFinal = `https://wa.me/${examen.celular}?text=${textoCodificado}`;
-        
-        window.open(urlFinal, '_blank');
+
+        const enlaceTemporal = document.createElement('a');
+        enlaceTemporal.href = urlFinal;
+        enlaceTemporal.target = '_blank';
+        enlaceTemporal.rel = 'noopener noreferrer'; // Añade seguridad extra requerida en producción
+        enlaceTemporal.click();
     }
 
     private inyectarEstilosClaros(): void {
