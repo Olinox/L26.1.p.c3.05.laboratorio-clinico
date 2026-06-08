@@ -140,10 +140,13 @@ export class Cl_vLaboratorio {
             const tarjeta = document.createElement('div');
             tarjeta.className = 'tarjeta-finalizado';
 
+            // Mapeamos los nombres de los estudios solicitados
             const nombresEstudios = ex.estudiosSolicitados.map(est => est.nombre).join(', ');
 
+            // REDISEÑO ADAPTABLE CON MARGINS COMPATIBLES
             tarjeta.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <strong style="font-size: 16px;">${ex.nombre}</strong>
                         <span style="font-size: 13px; color: var(--texto-secundario);">
@@ -153,9 +156,26 @@ export class Cl_vLaboratorio {
                             <strong>Estudios:</strong> ${nombresEstudios}
                         </span>
                     </div>
-                    <button class="btn-whatsapp-send" style="background-color: #25d366; color: #ffffff; border: none; padding: 10px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px;">
-                        🟢 Enviar por WhatsApp
-                    </button>
+                    
+                    <div style="display: flex; justify-content: flex-end; width: 100%;">
+                        <button class="btn-whatsapp-send" style="
+                            background-color: #25d366; 
+                            color: #ffffff; 
+                            border: none; 
+                            padding: 8px 14px; 
+                            border-radius: 6px; 
+                            font-weight: bold; 
+                            cursor: pointer; 
+                            display: inline-flex; 
+                            align-items: center; 
+                            gap: 6px; 
+                            font-size: 13px;
+                            white-space: nowrap;
+                        ">
+                            🟢 Enviar por WhatsApp
+                        </button>
+                    </div>
+
                 </div>
             `;
 
@@ -165,7 +185,23 @@ export class Cl_vLaboratorio {
                     alert('Este paciente no tiene registrado un número celular.');
                     return;
                 }
-                this.enviarReporteWhatsApp(ex);
+                
+                // SOLUCIÓN PARA VERCEL: Evita el bloqueo del navegador usando enlace temporal
+                const mensaje = `*🔬 LABORATORIO CLÍNICO - REPORTE DE RESULTADOS*\n--------------------------------------------------\n*Paciente:* ${ex.nombre}\n*Cédula:* V-${ex.cedula}\n*Orden Nº:* #${ex.id}\n--------------------------------------------------\n\n*RESULTADOS DE LOS ANÁLISIS:*\n\n` + 
+                    ex.estudiosSolicitados.map(estudio => {
+                        const resultado = ex.resultados[estudio.id || ''] || '_Pendiente por procesar_';
+                        return `▪️ *${estudio.nombre}:*\n   Resultado: *${resultado}*\n   Valores Ref: ${estudio.valorReferencia}\n\n`;
+                    }).join('') + 
+                    `--------------------------------------------------\n_✓ Resultados validados electrónicamente._`;
+
+                const textoCodificado = encodeURIComponent(mensaje);
+                const urlFinal = `https://wa.me/${ex.celular}?text=${textoCodificado}`;
+
+                const enlaceTemporal = document.createElement('a');
+                enlaceTemporal.href = urlFinal;
+                enlaceTemporal.target = '_blank';
+                enlaceTemporal.rel = 'noopener noreferrer';
+                enlaceTemporal.click();
             });
 
             this.divListaFinalizados.appendChild(tarjeta);
