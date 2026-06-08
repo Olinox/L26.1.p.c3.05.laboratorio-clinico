@@ -143,11 +143,11 @@ export class Cl_vLaboratorio {
             // Mapeamos los nombres de los estudios solicitados
             const nombresEstudios = ex.estudiosSolicitados.map(est => est.nombre).join(', ');
 
-            // REDISEÑO ADAPTABLE CON MARGINS COMPATIBLES
+            // ESTRUCTURA COMPACTA HORIZONTAL - SIN DIVS CONTENEDORES EXTRAS QUE ESTIREN EL BOTÓN
             tarjeta.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; width: 100%; box-sizing: border-box;">
                     
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0;">
                         <strong style="font-size: 16px;">${ex.nombre}</strong>
                         <span style="font-size: 13px; color: var(--texto-secundario);">
                             Cédula: V-${ex.cedula} | Celular: ${ex.celular || 'N/A'}
@@ -157,24 +157,10 @@ export class Cl_vLaboratorio {
                         </span>
                     </div>
                     
-                    <div style="display: flex; justify-content: flex-end; width: 100%;">
-                        <button class="btn-whatsapp-send" style="
-                            background-color: #25d366; 
-                            color: #ffffff; 
-                            border: none; 
-                            padding: 8px 14px; 
-                            border-radius: 6px; 
-                            font-weight: bold; 
-                            cursor: pointer; 
-                            display: inline-flex; 
-                            align-items: center; 
-                            gap: 6px; 
-                            font-size: 13px;
-                            white-space: nowrap;
-                        ">
-                            🟢 Enviar por WhatsApp
-                        </button>
-                    </div>
+                    <button class="btn-whatsapp-send" style=" background-color: #25d366; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; white-space: nowrap;
+                        flex-shrink: 0; width: max-content; /* Fuerza al botón a medir exactamente lo que mide la frase */ ">
+                        🟢 Enviar por WhatsApp
+                    </button>
 
                 </div>
             `;
@@ -186,7 +172,7 @@ export class Cl_vLaboratorio {
                     return;
                 }
                 
-                // SOLUCIÓN PARA VERCEL: Evita el bloqueo del navegador usando enlace temporal
+                // Lógica de envío optimizada para producción (Vercel)
                 const mensaje = `*🔬 LABORATORIO CLÍNICO - REPORTE DE RESULTADOS*\n--------------------------------------------------\n*Paciente:* ${ex.nombre}\n*Cédula:* V-${ex.cedula}\n*Orden Nº:* #${ex.id}\n--------------------------------------------------\n\n*RESULTADOS DE LOS ANÁLISIS:*\n\n` + 
                     ex.estudiosSolicitados.map(estudio => {
                         const resultado = ex.resultados[estudio.id || ''] || '_Pendiente por procesar_';
