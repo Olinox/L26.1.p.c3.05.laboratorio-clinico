@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab-Clínico // Panel Administración</title>
+    <style>
+        :root {
+            --bg-principal: #f4f6f9;      /* Gris muy claro de fondo general */
+            --bg-tarjeta: #ffffff;        /* Blanco para los paneles */
+            --texto: #1e293b;             /* Azul oscuro/grisáceo para el texto principal */
+            --texto-secundario: #64748b;    /* Gris para etiquetas secundarias */
+            --acento-azul: #0070f3;       /* Azul brillante para botones principales */
+            --acento-verde: #10b981;      /* Verde esmeralda para estatus finalizados */
+            --borde: #cbd5e1;             /* Gris suave para los bordes */
+        }
+        
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 2px solid var(--borde);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h1 { margin: 0; font-size: 24px; }
+        .rol-tag { color: var(--acento-azul); font-size: 14px; font-weight: bold; }
+        .contenedor-mbi {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        .panel {
+            background-color: var(--bg-tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid var(--borde); padding-bottom: 8px; }
+        .grupo-campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: var(--texto-secundario); }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-principal);
+            border: 1px solid var(--borde);
+            border-radius: 4px;
+            color: var(--texto);
+            box-sizing: border-box;
+        }
+        .checklist-estudios {
+            border: 1px solid var(--borde);
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: var(--bg-principal);
+        }
+        .opcion-estudio {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #232328;
+        }
+        .opcion-estudio:last-child { border-bottom: none; }
+        .total-caja {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #1a2333;
+            border: 1px solid var(--acento-azul);
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: right;
+            font-size: 18px;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background-color: var(--acento-azul);
+            color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px;
+        }
+        .tarjeta-examen { background-color: var(--bg-principal); border-left: 4px solid var(--acento-verde); padding: 12px; border-radius: 4px; margin-bottom: 12px; }
+        .btn-imprimir { background: none; border: 1px solid var(--acento-verde); color: var(--acento-verde); padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 12px; }
+
+        /* ==========================================================================
+           DISEÑO RESPONSIVO (ADAPTABLE A MÓVILES) - NO ALTERA LOS ESTILOS ORIGINALES
+           ========================================================================== */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            header { text-align: center; padding-bottom: 12px; margin-bottom: 15px; }
+            h1 { font-size: 20px; }
+            .contenedor-mbi {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .panel { padding: 15px; }
+            .tarjeta-examen {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+            .btn-imprimir { width: 100%; padding: 8px; text-align: center; }
+            #modal-impresion > div {
+                width: 95% !important;
+                margin: 5% auto !important;
+                padding: 15px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SISTEMA DE GESTIÓN DE LABORATORIO CLÍNICO</h1>
+        <span class="rol-tag">PANEL DE FACTURACIÓN Y ADMINISTRACIÓN</span>
+    </header>
+
+    <div class="contenedor-mbi">
+        <section class="panel">
+            <h2>📝 Registrar Nueva Orden Médica</h2>
+            <form id="form-orden">
+                <div class="grupo-campo">
+                    <label for="txt-nombre">Nombre Completo del Paciente</label>
+                    <input type="text" id="txt-nombre" placeholder="Ej. Juan Pérez" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="txt-cedula">Cédula de Identidad</label>
+                    <input type="text" id="txt-cedula" placeholder="Ej. 12345678" required>
+                </div>
+                <div class="grupo-input">
+                    <label for="txt-celular">Número de Celular (WhatsApp):</label>
+                    <input type="text" id="txt-celular" placeholder="Ej. 584125556677" required>
+                    <small style="color: var(--texto-secundario); font-size: 11px;">Incluir código de país (Ej: 58 para Venezuela, sin el signo +).</small>
+                    <br>
+                    <br>
+                </div>
+                <div class="grupo-campo">
+                    <label>Selección de Estudios Solicitados</label>
+                    <div id="contenedor-estudios-checklist" class="checklist-estudios"></div>
+                </div>
+                <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px; margin-bottom: 12px;">    
+                    <button type="button" id="btn-abrir-modal-estudio" style="
+                        display: inline-flex; align-items: center; justify-content: center; gap: 6px; background-color: var(--texto-secundario); color: #ffffff; 
+                        border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; box-sizing: border-box; text-align: center; transition: background-color 0.2s; " onmouseover="this.style.backgroundColor='#475569';" onmouseout="this.style.backgroundColor='var(--texto-secundario)';">
+                        ➕ Agregar Nuevo Tipo de Estudio al Catálogo
+                    </button>
+                </div>
+                <div class="total-pago" style=" background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; padding: 15px; margin-top: 20px; border-radius: 6px; font-weight: bold; text-align: center; font-size: 18px; box-sizing: border-box; width: 100%;">
+                    TOTAL A COBRAR: <span class="moneda">$</span><span id="lbl-total">0.00</span>
+                </div>
+                <button type="submit">💳 PROCESAR COBRO Y GUARDAR</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>📋 Exámenes Finalizados (Listos para Entrega)</h2>
+            <div id="lista-finalizados"></div>
+        </section>
+    </div>
+
+    <div id="modal-impresion" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(4px);">
+        <div style="background-color: #1a1a1e; border: 1px solid #2f2f35; color: #ffffff; margin: 8% auto; padding: 25px; width: 90%; max-width: 550px; border-radius: 8px; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+            <span id="btn-cerrar-modal" style="color: #a0a0a5; float: right; font-size: 28px; font-weight: bold; cursor: pointer; transition: color 0.2s;">&times;</span>
+            <div id="modal-cuerpo-reporte" style="padding: 10px; background-color: #ffffff; border-radius: 4px; margin-top: 20px;"></div>
+            <div style="margin-top: 25px; text-align: right;">
+                <button id="btn-confirmar-impresion" style="background-color: var(--acento-verde); color: #121214; border: none; padding: 10px 22px; font-weight: bold; border-radius: 4px; cursor: pointer;">🖨️ CONFIRMAR IMPRESIÓN</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-nuevo-estudio" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px);">
+        <div style="background-color: var(--bg-tarjeta); border: 1px solid var(--borde); color: var(--texto); margin: 10% auto; padding: 25px; width: 90%; max-width: 450px; border-radius: 8px; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.15);">
+            
+            <span id="btn-cerrar-modal-estudio" style="color: var(--texto-secundario); float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            
+            <h3 style="margin-top: 0; margin-bottom: 20px; color: var(--texto);">🧪 Registrar Nuevo Tipo de Estudio</h3>
+            
+            <form id="form-nuevo-estudio">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Nombre del Estudio:</label>
+                    <input type="text" id="txt-nuevo-estudio-nombre" placeholder="Ej. Úrea o Perfil Lipídico" required style="background-color: #ffffff; border: 1px solid var(--borde); color: var(--texto); padding: 8px; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Precio ($):</label>
+                    <input type="number" id="txt-nuevo-estudio-precio" step="0.01" placeholder="Ej. 12.50" required style="background-color: #ffffff; border: 1px solid var(--borde); color: var(--texto); padding: 8px; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Valores de Referencia:</label>
+                    <input type="text" id="txt-nuevo-estudio-ref" placeholder="Ej. 10 - 45 mg/dL" required style="background-color: #ffffff; border: 1px solid var(--borde); color: var(--texto); padding: 8px; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: stretch; margin-top: 20px; width: 100%;">    
+                    <button type="button" id="btn-cancelar-estudio" style="flex: 1; max-width: 140px; height: 36px; line-height: 36px; box-sizing: border-box; text-align: center; background-color: #cbd5e1; color: #1e293b; border: none; padding: 0; margin: 0; border-radius: 4px; font-weight: bold; cursor: pointer; overflow: hidden;">
+                        Cancelar
+                    </button>                    
+                    <button type="submit" style="flex: 1; max-width: 140px; height: 36px; line-height: 36px; box-sizing: border-box; text-align: center; background-color: var(--acento-azul); color: #ffffff; border: none; padding: 0; margin: 0; border-radius: 4px; font-weight: bold; cursor: pointer; overflow: hidden;">
+                        💾 Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script type="module" src="./dist/views/Cl_vLaboratorio.js"></script>
+</body>
+</html>

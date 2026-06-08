@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab-Clínico // Módulo Técnico</title>
+    <style>
+        :root {
+            --bg-principal: #f4f6f9;      /* Fondo claro */
+            --bg-tarjeta: #ffffff;        /* Paneles blancos */
+            --texto: #1e293b;             /* Texto oscuro legible */
+            --texto-secundario: #64748b;    /* Subtítulos */
+            --acento-naranja: #e67e22;    /* Naranja suave para el rol tag */
+            --acento-verde: #10b981;      /* Verde para el botón de validar */
+            --borde: #cbd5e1;             /* Bordes definidos pero sutiles */
+        }
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 2px solid var(--borde);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h1 { margin: 0; font-size: 24px; }
+        .rol-tag { color: var(--acento-naranja); font-size: 14px; font-weight: bold; }
+        .contenedor-mbi {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 25px;
+        }
+        .panel {
+            background-color: var(--bg-tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid var(--borde); padding-bottom: 8px; }
+        .tarjeta-paciente {
+            background-color: var(--bg-principal);
+            border: 1px solid var(--borde);
+            border-left: 4px solid var(--acento-naranja);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tarjeta-paciente:hover { background-color: #232328; }
+        .info-paciente .nombre { display: block; font-weight: bold; }
+        .info-paciente .cedula { font-size: 12px; color: var(--texto-secundario); }
+        .badge-cantidad {
+            background-color: #312215;
+            color: var(--acento-naranja);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .fila-resultado { margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid var(--borde); }
+        .fila-resultado label { font-weight: bold; display: block; margin-bottom: 6px; }
+        .entrada-resultado {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .txt-resultado-valor {
+            flex: 1;
+            padding: 8px;
+            background-color: var(--bg-principal);
+            border: 1px solid var(--borde);
+            border-radius: 4px;
+            color: white;
+        }
+        .valores-referencia { color: var(--texto-secundario); font-size: 13px; font-style: italic; white-space: nowrap; }
+        .acciones { margin-top: 25px; display: flex; justify-content: space-between; gap: 15px; }
+        .btn-guardar {
+            background-color: transparent;
+            color: var(--texto);
+            border: 1px solid var(--borde);
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-finalizar {
+            background-color: var(--acento-verde);
+            color: #121214;
+            border: none;
+            font-weight: bold;
+            padding: 10px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           DISEÑO RESPONSIVO (ADAPTABLE A MÓVILES) - NO ALTERA LOS ESTILOS ORIGINALES
+           ========================================================================== */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            header { text-align: center; padding-bottom: 12px; margin-bottom: 15px; }
+            h1 { font-size: 20px; }
+            .contenedor-mbi {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .panel { padding: 15px; }
+            .entrada-resultado {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .txt-resultado-valor { width: 100%; box-sizing: border-box; }
+            .valores-referencia { display: block; margin-top: 2px; }
+            .acciones {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-guardar, .btn-finalizar { width: 100%; padding: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SISTEMA DE GESTIÓN DE LABORATORIO CLÍNICO</h1>
+        <span class="rol-tag">MÓDULO TÉCNICO ANALÍTICO (BIOANALISTA)</span>
+    </header>
+
+    <div class="contenedor-mbi">
+        <section class="panel">
+            <h2>⏳ Cola de Pacientes Pendientes</h2>
+            <div id="lista-pendientes"></div>
+        </section>
+
+        <section class="panel">
+            <h2>📝 Transcripción de Resultados</h2>
+            <div id="zona-edicion">
+                <form id="form-resultados" style="display: none;">
+                    <div id="contenedor-campos-dinamicos"></div>
+                    <div class="acciones">
+                        <button type="button" class="btn-guardar">💾 Guardar Avance</button>
+                        <button type="submit" class="btn-finalizar">✅ VALIDAR Y FINALIZAR</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="./dist/views/Cl_vExamen.js"></script>
+</body>
+</html>
